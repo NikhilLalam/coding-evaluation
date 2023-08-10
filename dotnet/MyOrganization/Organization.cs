@@ -10,6 +10,8 @@ namespace MyOrganization
     {
         private Position root;
 
+        public int identifier { get; private set; }
+
         public Organization()
         {
             root = CreateOrganization();
@@ -24,11 +26,35 @@ namespace MyOrganization
          * @param title
          * @return the newly filled position or empty if no position has that title
          */
+
+
         public Position? Hire(Name person, string title)
         {
-            //your code here
+            return HireInPosition(root, person, title);
+            //return null;
+        }
+
+        private Position? HireInPosition(Position position, Name person, string title)
+        {
+            if (position.GetTitle() == title && !position.IsFilled())
+            {
+                Employee newEmployee = new Employee(identifier, person);
+                position.SetEmployee(newEmployee);
+                return position;
+            }
+
+            foreach (var directReport in position.GetDirectReports())
+            {
+                var hiredPosition = HireInPosition(directReport, person, title);
+                if (hiredPosition != null)
+                {
+                    return hiredPosition;
+                }
+            }
+
             return null;
         }
+
 
         override public string ToString()
         {
